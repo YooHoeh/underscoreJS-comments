@@ -4,12 +4,10 @@
 //     begin 4.8.2019
 
 (function() {
-  // Baseline setup
+  // 基线设置
   // --------------
 
-  // Establish the root object, `window` (`self`) in the browser, `global`
-  // on the server, or `this` in some virtual machines. We use `self`
-  // instead of `window` for `WebWorker` support.
+  //这一段是根据平台选择根容器，浏览器用window，服务器（nodejs）用global，虚拟机用this，对于webworker用self
   var root =
     (typeof self == "object" && self.self === self && self) ||
     (typeof global == "object" && global.global === global && global) ||
@@ -19,7 +17,7 @@
   // Save the previous value of the `_` variable.
   var previousUnderscore = root._;
 
-  // Save bytes in the minified (but not gzipped) version:
+  // 保存缩短后常用的几个原型链属性
   var ArrayProto = Array.prototype,
     ObjProto = Object.prototype;
   var SymbolProto = typeof Symbol !== "undefined" ? Symbol.prototype : null;

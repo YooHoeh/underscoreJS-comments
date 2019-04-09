@@ -2,19 +2,23 @@
 //     http://underscorejs.org
 //     comments by YooHoeh
 //     begin 4.8.2019
+//
+//     水平有限，若存在部分错误可以联系我
+//     Email：yoohoeh@.163.com
 
 (function() {
-  // 基线设置
+  // 基础设置
   // --------------
 
-  //这一段是根据平台选择根容器，浏览器用window，服务器（nodejs）用global，虚拟机用this，对于webworker用self
+  // 根据平台选择根容器，浏览器用window，服务器（nodejs）用global，
+  // 虚拟机用this，对于webworker用self
   var root =
     (typeof self == "object" && self.self === self && self) ||
     (typeof global == "object" && global.global === global && global) ||
     this ||
     {};
 
-  // Save the previous value of the `_` variable.
+  // 保存`_`变量的前一个值,即使`_`全局可访问
 
   // 保存缩短后常用的几个原型链属性
   var ArrayProto = Array.prototype,
@@ -60,9 +64,9 @@
   /**
    * 返回传入回调的有效（对于当前引擎）版本的内部函数，
    * 以便在其他Underscore函数中重复应用。
-   * @param {引用函数} func
-   * @param {函数上下文} context
-   * @param {参数个数，默认为3} argCount
+   * @param {Function} func 引用函数
+   * @param {Element} context 函数上下文
+   * @param {Number} argCount 参数个数，默认为3
    */
   var optimizeCb = function(func, context, argCount) {
     if (context === void 0) return func; //'void 0' 等价于'undefind'
@@ -91,9 +95,9 @@
    * 用于生成回调的内部函数，该回调可应用于集合中的每个元素，
    * 返回所需的结果—或'Identity'、任意回调、属性匹配器或属性访问器。
    * 注意：这个方法很关键，会在后面多次调用这个方法
-   * @param {传入数据} value
-   * @param {函数上下文} context
-   * @param {参数个数} argCount
+   * @param {} value 传入数据
+   * @param {Element} context 函数上下文
+   * @param {Number} argCount 参数个数
    */
   var cb = function(value, context, argCount) {
     if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
@@ -146,7 +150,7 @@
 
   /**
    * 内部函数，用于从继承的另一个对象创建一个新的对象
-   * @param {原型} prototype
+   * @param {prototype} prototype 原型
    */
   var baseCreate = function(prototype) {
     if (!_.isObject(prototype)) return {};
@@ -164,7 +168,11 @@
     };
   };
 
-  //判断是否具有指定的属性
+  /**
+   * 判断是否具有指定的属性
+   * @param {Object} obj 待查询对象
+   * @param {String} path 待查询的属性
+   */
   var has = function(obj, path) {
     return obj != null && hasOwnProperty.call(obj, path);
   };
@@ -197,9 +205,9 @@
   /**
    * 基本方法，'each'接口，也叫'forEach'
    * 将除了类数组之外的原始对象
-   * @param {作用域} obj
-   * @param {迭代器} iteratee
-   * @param {上下文} context
+   * @param {Object} obj 作用域
+   * @param {Function} iteratee 迭代器
+   * @param {Element} context 上下文
    */
   _.each = _.forEach = function(obj, iteratee, context) {
     iteratee = optimizeCb(iteratee, context);
@@ -218,7 +226,7 @@
   };
 
   /**
-   * 基本方法，'map'接口，也叫'collect'
+   * 基本方法，`map`接口，也叫`collect`
    * 返回对每个元素应用迭代器的结果。
    * @param {作用域} obj
    * @param {迭代器} iteratee
@@ -236,7 +244,10 @@
     return results;
   };
 
-  // Create a reducing function iterating left or right.
+  /**
+   * 创建一个左循环或右循环的缩减函数。
+   * @param {} dir 方向
+   */
   var createReduce = function(dir) {
     // Wrap code that reassigns argument variables in a separate function than
     // the one that accesses `arguments.length` to avoid a perf hit. (#1991)
@@ -1072,7 +1083,6 @@
     }
   };
 
-
   /**
    * 检索对象自身属性的名称。委托给ES5的原生'Object.keys'
    */
@@ -1534,7 +1544,6 @@
   };
 
   _.noop = function() {};
-
 
   /**
    * 创建一个函数，当传递对象时，该函数将沿着给定的`path`（指定为键或索引数组）遍历对象的属性。

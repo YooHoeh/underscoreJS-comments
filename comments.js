@@ -123,7 +123,7 @@
     return function() {
       var length = Math.max(arguments.length - startIndex, 0),  //判断余下的参数是否大于0
         rest = Array(length),   //这里存余下的参数
-        index = 0;
+        index = 0; //这里没有使用var声明变量，所以这会导致index存在对应的func内部作用。
       for (; index < length; index++) {
         rest[index] = arguments[index + startIndex];
       }
@@ -144,9 +144,13 @@
     };
   };
 
-  // An internal function for creating a new object that inherits from another.
+ 
+  /**
+   * 内部函数，用于从继承的另一个对象创建一个新的对象
+   * @param {原型} prototype 
+   */
   var baseCreate = function(prototype) {
-    if (!_.isObject(prototype)) return {};
+    if (!_.isObject(prototype)) return {}; 
     if (nativeCreate) return nativeCreate(prototype);
     Ctor.prototype = prototype;
     var result = new Ctor();
@@ -154,12 +158,14 @@
     return result;
   };
 
+  //获取对象的某个属性
   var shallowProperty = function(key) {
     return function(obj) {
       return obj == null ? void 0 : obj[key];
     };
   };
 
+  //判断是否具有指定的属性
   var has = function(obj, path) {
     return obj != null && hasOwnProperty.call(obj, path);
   };
@@ -173,11 +179,11 @@
     return length ? obj : void 0;
   };
 
-  // Helper for collection methods to determine whether a collection
-  // should be iterated as an array or as an object.
-  // Related: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength
-  // Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094
-  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+  /**
+   * 用于确认集合中的是否是集合或者迭代器（类数组）的方法，避免一些bug
+   * 原理是通过获取集合的长度，判断其长度是否在合理范围内。
+   */
+  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;    //最大数组长度
   var getLength = shallowProperty("length");
   var isArrayLike = function(collection) {
     var length = getLength(collection);
@@ -186,12 +192,17 @@
     );
   };
 
-  // Collection Functions
+  // 集合方法
   // --------------------
 
-  // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles raw objects in addition to array-likes. Treats all
-  // sparse array-likes as if they were dense.
+
+  /**
+   * 基本方法，'each'接口，也叫'forEach'
+   * 将除了类数组之外的原始对象
+   * @param {作用域} obj 
+   * @param {迭代器} iteratee 
+   * @param {上下文} context 
+   */
   _.each = _.forEach = function(obj, iteratee, context) {
     iteratee = optimizeCb(iteratee, context);
     var i, length;

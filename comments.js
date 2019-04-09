@@ -15,40 +15,36 @@
     {};
 
   // Save the previous value of the `_` variable.
-  var previousUnderscore = root._;
 
   // 保存缩短后常用的几个原型链属性
   var ArrayProto = Array.prototype,
     ObjProto = Object.prototype;
   var SymbolProto = typeof Symbol !== "undefined" ? Symbol.prototype : null;
 
-  // Create quick reference variables for speed access to core prototypes.
+  // 从原型链创建快速使用方法.
   var push = ArrayProto.push,
     slice = ArrayProto.slice,
     toString = ObjProto.toString,
     hasOwnProperty = ObjProto.hasOwnProperty;
 
-  // All **ECMAScript 5** native function implementations that we hope to use
-  // are declared here.
+  // 这里声明了要用到的所有ES5原生函数接口
   var nativeIsArray = Array.isArray,
     nativeKeys = Object.keys,
     nativeCreate = Object.create;
 
-  // Naked function reference for surrogate-prototype-swapping.
+  // 代理原型交换的空函数引用。
   var Ctor = function() {};
 
-  // Create a safe reference to the Underscore object for use below.
+  // 为后面代码创建一个Underscore对象的安全引用
   var _ = function(obj) {
     if (obj instanceof _) return obj;
     if (!(this instanceof _)) return new _(obj);
     this._wrapped = obj;
   };
 
-  // Export the Underscore object for **Node.js**, with
-  // backwards-compatibility for their old module API. If we're in
-  // the browser, add `_` as a global object.
-  // (`nodeType` is checked to ensure that `module`
-  // and `exports` are not HTML elements.)
+  //为nodejs的旧的模块API做向后兼容，导出Underscore对象
+  //在浏览器环境下则使用'_'作为全局对象
+  //检查`nodeType`以确保`module`//和`exports`不是HTML元素。
   if (typeof exports != "undefined" && !exports.nodeType) {
     if (typeof module != "undefined" && !module.nodeType && module.exports) {
       exports = module.exports = _;
@@ -58,12 +54,11 @@
     root._ = _;
   }
 
-  // Current version.
+  // 当前版本
   _.VERSION = "1.9.1";
 
-  // Internal function that returns an efficient (for current engines) version
-  // of the passed-in callback, to be repeatedly applied in other Underscore
-  // functions.
+  // 返回传入回调的有效（对于当前引擎）版本的内部函数，
+  //以便在其他Underscore函数中重复应用。
   var optimizeCb = function(func, context, argCount) {
     if (context === void 0) return func;
     switch (argCount == null ? 3 : argCount) {

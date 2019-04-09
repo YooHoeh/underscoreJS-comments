@@ -57,16 +57,21 @@
   // 当前版本
   _.VERSION = "1.9.1";
 
-  // 返回传入回调的有效（对于当前引擎）版本的内部函数，
-  //以便在其他Underscore函数中重复应用。
+  /**
+   * 返回传入回调的有效（对于当前引擎）版本的内部函数，
+   * 以便在其他Underscore函数中重复应用。
+   * @param {引用函数} func
+   * @param {函数上下文} context
+   * @param {参数个数，默认为3} argCount
+   */
   var optimizeCb = function(func, context, argCount) {
-    if (context === void 0) return func;
+    if (context === void 0) return func; //'void 0' 等价于'undefind'
     switch (argCount == null ? 3 : argCount) {
       case 1:
         return function(value) {
           return func.call(context, value);
         };
-      // The 2-argument case is omitted because we’re not using it.
+      // 由于没有用到两个参数的情况这里直接省略
       case 3:
         return function(value, index, collection) {
           return func.call(context, value, index, collection);
@@ -82,10 +87,13 @@
   };
 
   var builtinIteratee;
-
-  // An internal function to generate callbacks that can be applied to each
-  // element in a collection, returning the desired result — either `identity`,
-  // an arbitrary callback, a property matcher, or a property accessor.
+  /**
+   * 用于生成回调的内部函数，该回调可应用于集合中的每个元素，
+   * 返回所需的结果—或'Identity'、任意回调、属性匹配器或属性访问器。
+   * @param {传入数据} value
+   * @param {函数上下文} context
+   * @param {参数个数} argCount
+   */
   var cb = function(value, context, argCount) {
     if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
     if (value == null) return _.identity;
@@ -94,23 +102,27 @@
     return _.property(value);
   };
 
-  // External wrapper for our callback generator. Users may customize
-  // `_.iteratee` if they want additional predicate/iteratee shorthand styles.
-  // This abstraction hides the internal-only argCount argument.
+  //回调生成器的外部包装。如果用户需要其他原型/迭代器速记样式，则可以自定义
+  //`_u.Iteratee`
+  //此抽象隐藏了仅内部argCount参数。
   _.iteratee = builtinIteratee = function(value, context) {
     return cb(value, context, Infinity);
   };
 
-  // Some functions take a variable number of arguments, or a few expected
-  // arguments at the beginning and then a variable number of values to operate
-  // on. This helper accumulates all remaining arguments past the function’s
-  // argument length (or an explicit `startIndex`), into an array that becomes
-  // the last argument. Similar to ES6’s "rest parameter".
+ 
+  /**
+   * 有些函数的参数个数是可变的，或者在开始处有一些确定下来的参数，
+   * 然后是要操作的值个数是可变的。
+   * 此帮助程序将超过函数的参数长度（或显式的`startindex`）的所有剩余参数累积到一个数组中，
+   * 该数组将变为最后一个参数。与ES6其他参数类似,即'...'操作符。  
+   * @param {传入函数} func 
+   * @param {起始位置} startIndex 
+   */
   var restArguments = function(func, startIndex) {
     startIndex = startIndex == null ? func.length - 1 : +startIndex;
     return function() {
-      var length = Math.max(arguments.length - startIndex, 0),
-        rest = Array(length),
+      var length = Math.max(arguments.length - startIndex, 0),  //判断余下的参数是否大于0
+        rest = Array(length),   //这里存余下的参数
         index = 0;
       for (; index < length; index++) {
         rest[index] = arguments[index + startIndex];
@@ -1527,8 +1539,7 @@
     };
   };
 
-  // Returns a predicate for checking whether an object has a given set of
-  // `key:value` pairs.
+  //返回一个谓词，用于检查对象是否具有一组给定的`key:value`对。
   _.matcher = _.matches = function(attrs) {
     attrs = _.extendOwn({}, attrs);
     return function(obj) {

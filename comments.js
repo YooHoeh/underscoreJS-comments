@@ -90,6 +90,7 @@
   /**
    * 用于生成回调的内部函数，该回调可应用于集合中的每个元素，
    * 返回所需的结果—或'Identity'、任意回调、属性匹配器或属性访问器。
+   * 注意：这个方法很关键，会在后面多次调用这个方法
    * @param {传入数据} value
    * @param {函数上下文} context
    * @param {参数个数} argCount
@@ -109,20 +110,19 @@
     return cb(value, context, Infinity);
   };
 
- 
   /**
    * 有些函数的参数个数是可变的，或者在开始处有一些确定下来的参数，
    * 然后是要操作的值个数是可变的。
    * 此帮助程序将超过函数的参数长度（或显式的`startindex`）的所有剩余参数累积到一个数组中，
-   * 该数组将变为最后一个参数。与ES6其他参数类似,即'...'操作符。  
-   * @param {传入函数} func 
-   * @param {起始位置} startIndex 
+   * 该数组将变为最后一个参数。与ES6其他参数类似,即'...'操作符。
+   * @param {传入函数} func
+   * @param {起始位置} startIndex
    */
   var restArguments = function(func, startIndex) {
     startIndex = startIndex == null ? func.length - 1 : +startIndex;
     return function() {
-      var length = Math.max(arguments.length - startIndex, 0),  //判断余下的参数是否大于0
-        rest = Array(length),   //这里存余下的参数
+      var length = Math.max(arguments.length - startIndex, 0), //判断余下的参数是否大于0
+        rest = Array(length), //这里存余下的参数
         index = 0; //这里没有使用var声明变量，所以这会导致index存在对应的func内部作用。
       for (; index < length; index++) {
         rest[index] = arguments[index + startIndex];
@@ -144,13 +144,12 @@
     };
   };
 
- 
   /**
    * 内部函数，用于从继承的另一个对象创建一个新的对象
-   * @param {原型} prototype 
+   * @param {原型} prototype
    */
   var baseCreate = function(prototype) {
-    if (!_.isObject(prototype)) return {}; 
+    if (!_.isObject(prototype)) return {};
     if (nativeCreate) return nativeCreate(prototype);
     Ctor.prototype = prototype;
     var result = new Ctor();
@@ -183,7 +182,7 @@
    * 用于确认集合中的是否是集合或者迭代器（类数组）的方法，避免一些bug
    * 原理是通过获取集合的长度，判断其长度是否在合理范围内。
    */
-  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;    //最大数组长度
+  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1; //最大数组长度
   var getLength = shallowProperty("length");
   var isArrayLike = function(collection) {
     var length = getLength(collection);
@@ -195,13 +194,12 @@
   // 集合方法
   // --------------------
 
-
   /**
    * 基本方法，'each'接口，也叫'forEach'
    * 将除了类数组之外的原始对象
-   * @param {作用域} obj 
-   * @param {迭代器} iteratee 
-   * @param {上下文} context 
+   * @param {作用域} obj
+   * @param {迭代器} iteratee
+   * @param {上下文} context
    */
   _.each = _.forEach = function(obj, iteratee, context) {
     iteratee = optimizeCb(iteratee, context);
@@ -219,7 +217,13 @@
     return obj;
   };
 
-  // Return the results of applying the iteratee to each element.
+  /**
+   * 基本方法，'map'接口，也叫'collect'
+   * 返回对每个元素应用迭代器的结果。
+   * @param {作用域} obj
+   * @param {迭代器} iteratee
+   * @param {上下文} context
+   */
   _.map = _.collect = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
     var keys = !isArrayLike(obj) && _.keys(obj),
@@ -1068,8 +1072,10 @@
     }
   };
 
-  // Retrieve the names of an object's own properties.
-  // Delegates to **ECMAScript 5**'s native `Object.keys`.
+
+  /**
+   * 检索对象自身属性的名称。委托给ES5的原生'Object.keys'
+   */
   _.keys = function(obj) {
     if (!_.isObject(obj)) return [];
     if (nativeKeys) return nativeKeys(obj);
@@ -1529,8 +1535,10 @@
 
   _.noop = function() {};
 
-  // Creates a function that, when passed an object, will traverse that object’s
-  // properties down the given `path`, specified as an array of keys or indexes.
+
+  /**
+   * 创建一个函数，当传递对象时，该函数将沿着给定的`path`（指定为键或索引数组）遍历对象的属性。
+   */
   _.property = function(path) {
     if (!_.isArray(path)) {
       return shallowProperty(path);

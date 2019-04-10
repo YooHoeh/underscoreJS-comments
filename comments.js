@@ -253,7 +253,7 @@
 
   /**
    * 创建一个左循环或右循环的缩减函数。
-   * @param {Number} dir 方向 大于零从前往后循环，小于等于零从后往前循环
+   * @param {Number} dir 方向 `1`从前往后循环，`-1`从后往前循环
    */
   var createReduce = function(dir) {
     /**
@@ -262,7 +262,7 @@
      * @param {Object} obj 作用对象
      * @param {Function} iteratee 迭代器
      * @param {Object} memo 结果
-     * @param {Object} initial 初始值
+     * @param {Object=} initial 初始值
      */
     var reducer = function(obj, iteratee, memo, initial) {
       var keys = !isArrayLike(obj) && _.keys(obj),
@@ -285,11 +285,10 @@
     };
   };
 
-  // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`.
+  // **Reduce** 左循环，也可以用`foldl`
   _.reduce = _.foldl = _.inject = createReduce(1);
 
-  // The right-associative version of reduce, also known as `foldr`.
+  // **Reduce** 右循环，也可以用`foldr`
   _.reduceRight = _.foldr = createReduce(-1);
 
   // Return the first value which passes a truth test. Aliased as `detect`.
@@ -736,8 +735,17 @@
     return result;
   };
 
-  // Generator function to create the findIndex and findLastIndex functions.
+  /**
+   * 生成一个确定方向的查找函数
+   * @param {Number} dir 查找方向，`1`为从前往后查找，`1`为从后往前找
+   * @returns {Number} 返回第一个找到的位置，不存在则返回`-1`
+   */
   var createPredicateIndexFinder = function(dir) {
+    /**
+     * @param {ArrayLike} array 待查找数组
+     * @param {Function} predicate 查找的条件函数
+     * @param {Element} context 上下文
+     */
     return function(array, predicate, context) {
       predicate = cb(predicate, context);
       var length = getLength(array);
@@ -749,7 +757,7 @@
     };
   };
 
-  // Returns the first index on an array-like that passes a predicate test.
+  // 返回符合条件的第一个值的位置
   _.findIndex = createPredicateIndexFinder(1);
   _.findLastIndex = createPredicateIndexFinder(-1);
 
@@ -1064,10 +1072,10 @@
 
   _.restArguments = restArguments;
 
-  // Object Functions
+  // 对象函数
   // ----------------
 
-  // Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.
+  //IE< 9中的`key`，对于`for key in…`中的键，它不会被迭代，因此会丢失。
   var hasEnumBug = !{ toString: null }.propertyIsEnumerable("toString");
   var nonEnumerableProps = [
     "valueOf",
@@ -1084,7 +1092,7 @@
     var proto =
       (_.isFunction(constructor) && constructor.prototype) || ObjProto;
 
-    // Constructor is a special case.
+    // 构造函数单独考虑
     var prop = "constructor";
     if (has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
 
@@ -1097,7 +1105,8 @@
   };
 
   /**
-   * 检索对象自身属性的名称。委托给ES5的原生'Object.keys'
+   * 检索对象自身属性的名称,并返回该对象的所有`Key`。
+   * 委托给ES5的原生'Object.keys'
    */
   _.keys = function(obj) {
     if (!_.isObject(obj)) return [];
@@ -1109,7 +1118,9 @@
     return keys;
   };
 
-  // Retrieve all the property names of an object.
+  /**
+   * 检索对象所有属性的名称,并返回该对象的所有`Key`。
+   */
   _.allKeys = function(obj) {
     if (!_.isObject(obj)) return [];
     var keys = [];
@@ -1119,7 +1130,9 @@
     return keys;
   };
 
-  // Retrieve the values of an object's properties.
+  /**
+   * 检索对象自身属性的值,并返回该对象的所有`Value`。
+   */
   _.values = function(obj) {
     var keys = _.keys(obj);
     var length = keys.length;

@@ -95,7 +95,7 @@
    * 用于生成回调的内部函数，该回调可应用于集合中的每个元素，
    * 返回所需的结果—或'Identity'、任意回调、属性匹配器或属性访问器。
    * 注意：这个方法很关键，会在后面多次调用这个方法
-   * @param {} value 传入数据
+   * @param {Function=} value 传入数据
    * @param {Element} context 函数上下文
    * @param {Number} argCount 参数个数
    */
@@ -107,20 +107,24 @@
     return _.property(value);
   };
 
-  //回调生成器的外部包装。如果用户需要其他原型/迭代器速记样式，则可以自定义
-  //`_u.Iteratee`
-  //此抽象隐藏了仅内部argCount参数。
+  /**
+   * 回调生成器的外部包装。
+   * 如果用户需要其他原型/迭代器速记样式，则可以自定义`_.Iteratee`
+   * 此抽象隐藏了仅内部使用的argCount参数（下面的`Infinity`）。
+   * @param {Function} 回调函数
+   * @param {Element} 上下文
+   */
   _.iteratee = builtinIteratee = function(value, context) {
     return cb(value, context, Infinity);
   };
 
   /**
    * 有些函数的参数个数是可变的，或者在开始处有一些确定下来的参数，
-   * 然后是要操作的值个数是可变的。
+   * 然后要操作的值个数是可变的。
    * 此帮助程序将超过函数的参数长度（或显式的`startindex`）的所有剩余参数累积到一个数组中，
    * 该数组将变为最后一个参数。与ES6其他参数类似,即'...'操作符。
-   * @param {传入函数} func
-   * @param {起始位置} startIndex
+   * @param {Function} func 传入函数
+   * @param {Number=} startIndex 起始位置
    */
   var restArguments = function(func, startIndex) {
     startIndex = startIndex == null ? func.length - 1 : +startIndex;
@@ -150,7 +154,7 @@
 
   /**
    * 内部函数，用于从继承的另一个对象创建一个新的对象
-   * @param {prototype} prototype 原型
+   * @param {String} prototype 原型
    */
   var baseCreate = function(prototype) {
     if (!_.isObject(prototype)) return {};
@@ -161,7 +165,10 @@
     return result;
   };
 
-  //获取对象的某个属性
+  /**
+   * 获取对象的某个属性
+   * @param {String} key 属性名
+   */
   var shallowProperty = function(key) {
     return function(obj) {
       return obj == null ? void 0 : obj[key];
@@ -228,9 +235,9 @@
   /**
    * 基本方法，`map`接口，也叫`collect`
    * 返回对每个元素应用迭代器的结果。
-   * @param {作用域} obj
-   * @param {迭代器} iteratee
-   * @param {上下文} context
+   * @param {Object} obj 作用域
+   * @param {Function} iteratee 迭代器
+   * @param {Element} context 上下文
    */
   _.map = _.collect = function(obj, iteratee, context) {
     iteratee = cb(iteratee, context);
@@ -246,15 +253,21 @@
 
   /**
    * 创建一个左循环或右循环的缩减函数。
-   * @param {} dir 方向
+   * @param {Number} dir 方向 大于零从前往后循环，小于等于零从后往前循环
    */
   var createReduce = function(dir) {
-    // Wrap code that reassigns argument variables in a separate function than
-    // the one that accesses `arguments.length` to avoid a perf hit. (#1991)
+    /**
+     * 在单独的函数中重新分配参数变量的包装代码访问`argument.length`
+     * 以避免性能受到影响。
+     * @param {Object} obj 作用对象
+     * @param {Function} iteratee 迭代器
+     * @param {Object} memo 结果
+     * @param {Object} initial 初始值
+     */
     var reducer = function(obj, iteratee, memo, initial) {
       var keys = !isArrayLike(obj) && _.keys(obj),
         length = (keys || obj).length,
-        index = dir > 0 ? 0 : length - 1;
+        index = dir > 0 ? 0 : length - 1; //判断方向
       if (!initial) {
         memo = obj[keys ? keys[index] : index];
         index += dir;

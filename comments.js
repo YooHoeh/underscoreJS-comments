@@ -94,7 +94,7 @@
   /**
    * 用于生成回调的内部函数，该回调可应用于集合中的每个元素，
    * 返回所需的结果—或'Identity'、任意回调、属性匹配器或属性访问器。
-   * 注意：这个方法很关键，会在后面多次调用这个方法
+   * 注意：这个方法很关键，会在后面多次调用这个方法,想学习源码必须先看懂这个函数
    * @param {Function=} value 传入数据
    * @param {Element} context 函数上下文
    * @param {Number} argCount 参数个数
@@ -285,21 +285,30 @@
     };
   };
 
-  // **Reduce** 左循环，也可以用`foldl`
+  // **Reduce** 左循环，`reduce`也可以用`foldl`
   _.reduce = _.foldl = _.inject = createReduce(1);
 
-  // **Reduce** 右循环，也可以用`foldr`
+  // **Reduce** 右循环，`reduceRight`也可以用`foldr`
   _.reduceRight = _.foldr = createReduce(-1);
 
-  // Return the first value which passes a truth test. Aliased as `detect`.
+  /**
+   * 返回第一个通过匹配的值，又名`detect`
+   * @param {Object} obj 作用域
+   * @param {Function} predicate 判断是否匹配的函数
+   * @param {Element} context 上下文
+   */
   _.find = _.detect = function(obj, predicate, context) {
     var keyFinder = isArrayLike(obj) ? _.findIndex : _.findKey;
     var key = keyFinder(obj, predicate, context);
     if (key !== void 0 && key !== -1) return obj[key];
   };
 
-  // Return all the elements that pass a truth test.
-  // Aliased as `select`.
+  /**
+   * 返回所有通过匹配的值，又名`select`
+   * @param {Object} obj 作用域
+   * @param {Function} predicate 判断是否匹配的函数
+   * @param {Element} context 上下文
+   */
   _.filter = _.select = function(obj, predicate, context) {
     var results = [];
     predicate = cb(predicate, context);
@@ -309,13 +318,22 @@
     return results;
   };
 
-  // Return all the elements for which a truth test fails.
+  /**
+   * 返回所有未通过匹配的值
+   * @param {Object} obj 作用域
+   * @param {Function} predicate 判断是否匹配的函数
+   * @param {Element} context 上下文
+   */
   _.reject = function(obj, predicate, context) {
     return _.filter(obj, _.negate(cb(predicate)), context);
   };
 
-  // Determine whether all of the elements match a truth test.
-  // Aliased as `all`.
+  /**
+   * 确定所有元素是否匹配真值测试。别名为`all`。
+   * @param {Object} obj 作用域
+   * @param {Function} predicate 判断是否匹配的函数
+   * @param {Element} context 上下文
+   */
   _.every = _.all = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = !isArrayLike(obj) && _.keys(obj),
@@ -327,8 +345,12 @@
     return true;
   };
 
-  // Determine if at least one element in the object matches a truth test.
-  // Aliased as `any`.
+  /**
+   * 确定对象中是否至少有一个元素与真值测试匹配。别名为`any`。
+   * @param {Object} obj 作用域
+   * @param {Function} predicate 判断是否匹配的函数
+   * @param {Element} context 上下文
+   */
   _.some = _.any = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = !isArrayLike(obj) && _.keys(obj),
@@ -342,13 +364,22 @@
 
   // Determine if the array or object contains a given item (using `===`).
   // Aliased as `includes` and `include`.
+  /**
+   * 确定对象或者数组中是否有一个元素与给定的值匹配。别名为`includes`。
+   * @param {Object} obj 作用域
+   * @param {Function} predicate 判断是否匹配的函数
+   * @param {Element} context 上下文
+   */
   _.contains = _.includes = _.include = function(obj, item, fromIndex, guard) {
     if (!isArrayLike(obj)) obj = _.values(obj);
     if (typeof fromIndex != "number" || guard) fromIndex = 0;
     return _.indexOf(obj, item, fromIndex) >= 0;
   };
 
-  // Invoke a method (with arguments) on every item in a collection.
+  /**
+   * 对集合中的每个项调用方法（带参数）。
+   * 
+   */
   _.invoke = restArguments(function(obj, path, args) {
     var contextPath, func;
     if (_.isFunction(path)) {
@@ -1216,6 +1247,11 @@
   _.extendOwn = _.assign = createAssigner(_.keys);
 
   // Returns the first key on an object that passes a predicate test.
+  /**
+   * @param {Object} obj
+   * @param {Function} predicate
+   * @param {Elelment} context
+   */
   _.findKey = function(obj, predicate, context) {
     predicate = cb(predicate, context);
     var keys = _.keys(obj),

@@ -378,7 +378,7 @@
 
   /**
    * 对集合中的每个项调用方法（带参数）。
-   * 
+   *
    */
   _.invoke = restArguments(function(obj, path, args) {
     var contextPath, func;
@@ -1629,7 +1629,7 @@
     };
   };
 
-  //返回一个谓词，用于检查对象是否具有一组给定的`key:value`对。
+  //返回一个函数，这个函数用于检查对象是否具有一组给定的`key:value`对。
   _.matcher = _.matches = function(attrs) {
     attrs = _.extendOwn({}, attrs);
     return function(obj) {
